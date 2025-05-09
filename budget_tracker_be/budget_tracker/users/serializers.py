@@ -67,10 +67,3 @@ class UserLoginSerializer(serializers.Serializer):
             'access': str(refresh.access_token),
         }
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = [
-            'email', 'phone_number', 'first_name', 'last_name',
-            'profile_picture', 'gender'
-        ]
