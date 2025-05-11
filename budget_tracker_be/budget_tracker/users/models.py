@@ -4,7 +4,15 @@ from django.core.validators import FileExtensionValidator
 from django.utils.translation import gettext_lazy as _
 
 class UserManager(BaseUserManager):
+    """
+    Custom manager for the User model.
+
+    Supports creating users with either email or phone number, and creating superusers.
+    """
     def create_user(self, email=None, phone_number=None, password=None, **extra_fields):
+        """
+        Creates and returns a user with the given email or phone number and password.
+        """
         if not email and not phone_number:
             raise ValueError('Users must have either an email or a phone number.')
 
@@ -16,6 +24,9 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        """
+        Creates and returns a superuser with the given email and password.
+        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -26,12 +37,22 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email=email, password=password, **extra_fields)
 
+
 class Gender(models.TextChoices):
+    """
+    Enum-like class for user gender choices.
+    """
     MALE = "MALE", _('Male')
     FEMALE = "FEMALE", _('Female')
     OTHER = "OTHER", _('Other')
 
+
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Custom user model extending AbstractBaseUser and PermissionsMixin.
+
+    Uses email as the unique identifier and includes optional phone number-based login.
+    """
     email = models.EmailField(unique=True, null=True, blank=True)
     phone_number = models.CharField(max_length=15, unique=True, null=True, blank=True)
     first_name = models.CharField(max_length=30)
@@ -53,4 +74,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
     def __str__(self):
+        """
+        String representation of the user.
+        Returns the email if available, else the phone number.
+        """
         return self.email or self.phone_number
