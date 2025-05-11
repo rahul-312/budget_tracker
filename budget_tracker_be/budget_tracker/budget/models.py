@@ -30,6 +30,7 @@ class Transaction(models.Model):
 class Budget(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
     amount = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    spent_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     month = models.PositiveSmallIntegerField()  # 1 = January, 12 = December
     year = models.PositiveIntegerField()
 
