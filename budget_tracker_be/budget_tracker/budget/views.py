@@ -225,6 +225,7 @@ class BudgetSummaryView(APIView):
             return Response({"detail": "Month and year must be integers."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
+            # Try to retrieve the budget for the given month and year
             budget = Budget.objects.get(user=request.user, month=month, year=year)
             remaining = budget.amount - budget.spent_amount
             return Response({
@@ -236,7 +237,13 @@ class BudgetSummaryView(APIView):
             }, status=status.HTTP_200_OK)
 
         except Budget.DoesNotExist:
-            return Response({"detail": f"No budget found for {month:02d}/{year}."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                "month": month,
+                "year": year,
+                "budget_amount": 0,
+                "spent_amount": 0,
+                "remaining_amount": 0
+            }, status=status.HTTP_200_OK)
 
 class SpendingByCategoryView(APIView):
     """
